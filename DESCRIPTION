@@ -2,7 +2,7 @@ Package: CSMisc
 Title: Cole Stevenson Misc.
 Version: 0.0.0.9000
 Authors@R: 
-    person("Cole", "Stevenson", , "first.last@example.com", role = c("aut", "cre"))
+    person("Cole", "Stevenson", , "csteve59@uwo.ca", role = c("aut", "cre"))
 Description: Bunch of random functions
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
