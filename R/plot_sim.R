@@ -36,8 +36,9 @@
 #'   columns). Ignored if `facet` is given.
 #' @param type One of `"auto"` (the default), `"point"`, `"box"`, `"violin"`,
 #'   `"means"`, `"histogram"`, `"density"` or `"bar"`.
-#' @param smooth If `TRUE`, add a straight regression line to a scatterplot
-#'   (one per color group when `color` is mapped).
+#' @param smooth If `TRUE`, add a fitted line to a scatterplot (one per color
+#'   group when `color` is mapped). It is a straight regression line, or a
+#'   logistic curve (predicted probability) when `y` is a 0/1 variable.
 #' @param alpha Transparency of the points, boxes, bars and so on. The default
 #'   depends on the plot type.
 #' @param bins Number of bins for a histogram.
@@ -151,13 +152,20 @@ plot_sim <- function(data, x, y = NULL, color = NULL, fill = NULL,
   }
   maps <- maps[!vapply(maps, is_null, logical(1))]
 
+  # A 0/1 outcome gets a logistic curve instead of a straight line
+  y_binary <- has_y && is.numeric(yv) && all(yv %in% c(0, 1, NA))
+
   alpha_or <- function(default) if (is.null(alpha)) default else alpha
 
   p <- ggplot2::ggplot(data, ggplot2::aes(!!!maps))
 
   layers <- switch(
     type,
-    point = list(ggplot2::geom_point(alpha = alpha_or(0.4))),
+    point = if (y_binary) {
+      list(ggplot2::geom_jitter(width = 0, height = 0.04, alpha = alpha_or(0.2)))
+    } else {
+      list(ggplot2::geom_point(alpha = alpha_or(0.4)))
+    },
     box = list(ggplot2::geom_boxplot(alpha = alpha_or(0.6))),
     violin = list(ggplot2::geom_violin(alpha = alpha_or(0.6))),
     means = {
@@ -175,7 +183,12 @@ plot_sim <- function(data, x, y = NULL, color = NULL, fill = NULL,
   p <- p + layers
 
   if (smooth && type == "point") {
-    p <- p + ggplot2::geom_smooth(method = "lm", formula = y ~ x, se = TRUE)
+    p <- p + if (y_binary) {
+      ggplot2::geom_smooth(method = "glm", formula = y ~ x,
+                           method.args = list(family = "binomial"), se = TRUE)
+    } else {
+      ggplot2::geom_smooth(method = "lm", formula = y ~ x, se = TRUE)
+    }
   }
 
   # Panels, theme and labels --------------------------------------------------

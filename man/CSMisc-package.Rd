@@ -117,7 +117,7 @@ head(d)
 
 }
 \author{
-\strong{Maintainer}: Cole Stevenson \email{first.last@example.com}
+\strong{Maintainer}: Cole Stevenson \email{csteve59@uwo.ca}
 
 }
 \keyword{internal}

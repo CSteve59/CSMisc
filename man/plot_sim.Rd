@@ -42,8 +42,9 @@ columns). Ignored if \code{facet} is given.}
 \item{type}{One of \code{"auto"} (the default), \code{"point"}, \code{"box"}, \code{"violin"},
 \code{"means"}, \code{"histogram"}, \code{"density"} or \code{"bar"}.}
 
-\item{smooth}{If \code{TRUE}, add a straight regression line to a scatterplot
-(one per color group when \code{color} is mapped).}
+\item{smooth}{If \code{TRUE}, add a fitted line to a scatterplot (one per color
+group when \code{color} is mapped). It is a straight regression line, or a
+logistic curve (predicted probability) when \code{y} is a 0/1 variable.}
 
 \item{alpha}{Transparency of the points, boxes, bars and so on. The default
 depends on the plot type.}
